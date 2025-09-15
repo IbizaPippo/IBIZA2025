@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ibiza 2025 – Neon Party</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+      body { margin: 0; font-family: Inter, Poppins, system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+
+      /* Animations */
+      @keyframes gradientShift { 0%{ background-position:0% 50% } 50%{ background-position:100% 50% } 100%{ background-position:0% 50% } }
+      .title-gradient { background: linear-gradient(90deg,#ff00aa,#8e2de2,#00e5ff,#ffe066,#ff00aa); background-size:300% 300%; -webkit-background-clip:text; background-clip:text; color:transparent; animation: gradientShift 6s ease-in-out infinite; }
+      .title-glow { text-shadow: 0 0 6px rgba(255,0,170,0.5), 0 0 14px rgba(142,45,226,0.45), 0 0 22px rgba(0,229,255,0.35); }
+      @keyframes neonTextPulse { 0%,100%{ text-shadow:0 0 3px #ff0080,0 0 6px #ff0080,0 0 14px #ff0080;} 50%{ text-shadow:0 0 7px #ff00ff,0 0 14px #ff00ff,0 0 24px #ff00ff;} }
+      .neon-text { animation: neonTextPulse 2.6s ease-in-out infinite; }
+      @keyframes neonCardPulse { 0%,100%{ box-shadow:0 0 18px rgba(255,0,128,0.35);} 50%{ box-shadow:0 0 30px rgba(255,0,128,0.7);} }
+      .neon-card { animation: neonCardPulse 3.2s ease-in-out infinite; }
+      @keyframes bounceFly { 0%,100%{ transform: translateY(0)} 25%{ transform: translateY(-8px)} 75%{ transform: translateY(8px)} }
+      @keyframes flyX { 0% { transform: translateX(-10%); } 100% { transform: translateX(110%); } }
+    </style>
+  </head>
+
+  <body class="bg-gradient-to-br from-purple-900 via-pink-800 to-indigo-900 min-h-screen text-white">
+    <div id="root"></div>
+
+    <!-- React 18 -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <script type="text/babel">
+      const { useEffect, useState } = React;
+
+      function getTimeRemaining(nowMs, targetMs) {
+        const total = Math.max(0, targetMs - nowMs);
+        const days = Math.floor(total / (1000*60*60*24));
+        const hours = Math.floor((total / (1000*60*60)) % 24);
+        const minutes = Math.floor((total / (1000*60)) % 60);
+        const seconds = Math.floor((total / 1000) % 60);
+        return { total, days, hours, minutes, seconds };
+      }
+      const pad2 = (n) => String(Math.max(0, n|0)).padStart(2, "0");
+
+      const TimeBlock = ({ label, value }) => (
+        <div className="text-center">
+          <div className="text-sm font-semibold opacity-90">{label}</div>
+          <div className="text-4xl font-black neon-text">{value}</div>
+        </div>
+      );
+      const CountdownDisplay = ({ remain }) => (
+        <div className="flex items-center gap-4 text-3xl font-mono">
+          <TimeBlock label="Tage" value={remain.days} />
+          <div>:</div>
+          <TimeBlock label="Std" value={pad2(remain.hours)} />
+          <div>:</div>
+          <TimeBlock label="Min" value={pad2(remain.minutes)} />
+          <div>:</div>
+          <TimeBlock label="Sek" value={pad2(remain.seconds)} />
+        </div>
+      );
+
+      function App(){
+        const targetMs = new Date("2025-09-25T10:20:00+02:00").getTime();
+        const [remain, setRemain] = useState(getTimeRemaining(Date.now(), targetMs));
+        useEffect(()=>{
+          const id = setInterval(()=>setRemain(getTimeRemaining(Date.now(), targetMs)), 1000);
+          return ()=>clearInterval(id);
+        }, [targetMs]);
+
+        return (
+          <div className="max-w-4xl mx-auto px-6 py-12 space-y-12">
+            <div className="text-center space-y-2">
+              <h1 className="text-6xl font-extrabold title-gradient title-glow">IBIZA 2025</h1>
+              <p className="text-lg">25.09.2025 - 28.09.2025</p>
+            </div>
+
+            <div className="rounded-2xl p-6 bg-white/10 neon-card">
+              <h2 className="text-xl font-bold mb-4">Countdown bis zum Abflug</h2>
+              <CountdownDisplay remain={remain} />
+            </div>
+
+            <div className="rounded-2xl p-6 bg-white/10 neon-card">
+              <h2 className="text-2xl font-bold mb-3">Flüge</h2>
+              <ul className="space-y-2">
+                <li><strong>Flugnummer:</strong> EW 9500 (Eurowings)</li>
+                <li><strong>Hinflug:</strong> 25.09.2025 | 10:20 Düsseldorf → 12:55 Ibiza</li>
+                <li><strong>Rückflug:</strong> 28.09.2025 | 18:20 Ibiza → 20:45 Düsseldorf</li>
+                <li><strong>Kosten:</strong> 2.459,88 € (bereits bezahlt von der Kasse)</li>
+              </ul>
+            </div>
+
+            <div className="rounded-2xl p-6 bg-white/10 neon-card">
+              <h2 className="text-2xl font-bold mb-3">Hotel</h2>
+              <ul className="space-y-2">
+                <li><strong>Hotel:</strong> Club Can Bossa (3x Doppelzimmer inkl. Frühstück)</li>
+                <li><strong>DZ inkl. Frühstück:</strong> 1.416,60 €</li>
+                <li><strong>Touristensteuer:</strong> 39,60 €</li>
+                <li><strong>Total:</strong> 1.456,20 € (242,70 € pro Person)</li>
+              </ul>
+            </div>
+
+            <div className="rounded-2xl p-6 bg-white/10 neon-card">
+              <h2 className="text-2xl font-bold mb-3">Ushuaïa Ibiza</h2>
+              <img src="https://a.storyblok.com/f/116532/1800x1080/8f5a087519/ushuaia-ibiza-club.webp" alt="Ushuaïa Ibiza" className="rounded-xl w-full h-64 object-cover mb-2"/>
+              <p>Legendärer Open-Air-Club und Hotel in Playa d'en Bossa, bekannt für seine Partys.</p>
+            </div>
+          </div>
+        );
+      }
+
+      ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+    </script>
+  </body>
+</html>
